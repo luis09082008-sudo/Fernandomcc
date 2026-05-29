@@ -1,43 +1,48 @@
-import React from "react";
+// Importa componentes básicos
 import { StyleSheet, Text, View } from "react-native";
 
+// Tipo das propriedades recebidas pelo card
 type Props = {
   titulo: string;
   valor: number;
-  cor: string;
 };
 
-export default function CardResumo({ titulo, valor, cor }: Props) {
+// Componente que mostra um card de valor
+export default function CardResumo({ titulo, valor }: Props) {
   return (
     <View style={styles.card}>
+      {/* Título do card */}
       <Text style={styles.titulo}>{titulo}</Text>
 
-      <Text style={[styles.valor, { color: cor }]}>
+      {/* Valor formatado em reais */}
+      <Text style={styles.valor}>
         R$ {valor.toFixed(2).replace(".", ",")}
       </Text>
     </View>
   );
 }
 
+// Estilos do card
 const styles = StyleSheet.create({
   card: {
-    width: "100%",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fff",
     padding: 16,
-    borderRadius: 18,
+    borderRadius: 16,
     marginBottom: 12,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
   },
+
   titulo: {
-    color: "#6b7280",
+    color: "#555",
     fontSize: 14,
-    marginBottom: 8,
+    marginBottom: 6,
   },
+
   valor: {
-    fontSize: 23,
+    color: "#111",
+    fontSize: 24,
     fontWeight: "bold",
   },
 });

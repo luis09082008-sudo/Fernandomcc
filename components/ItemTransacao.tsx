@@ -1,142 +1,140 @@
-import React from "react";
+// Importa componentes básicos
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { Transacao } from "../contexts/FinanceContext";
+// Importa o tipo da transação
+import { Transacao } from "./TransacoesContext";
 
+// Tipo das propriedades do item
 type Props = {
-  item: Transacao;
+  transacao: Transacao;
   marcarComoPago: (id: string) => void;
-  removerTransacao: (id: string) => void;
+  apagarTransacao: (id: string) => void;
 };
 
+// Componente que mostra uma transação na lista
 export default function ItemTransacao({
-  item,
+  transacao,
   marcarComoPago,
-  removerTransacao,
+  apagarTransacao,
 }: Props) {
-  const corValor = item.tipo === "receita" ? "#16a34a" : "#dc2626";
-  const sinal = item.tipo === "receita" ? "+" : "-";
-
   return (
     <View style={styles.card}>
       <View style={styles.topo}>
-        <View style={styles.areaTexto}>
-          <Text style={styles.descricao}>{item.descricao}</Text>
+        <View>
+          {/* Título da transação */}
+          <Text style={styles.titulo}>{transacao.titulo}</Text>
 
-          <Text style={[styles.valor, { color: corValor }]}>
-            {sinal} R$ {item.valor.toFixed(2).replace(".", ",")}
-          </Text>
-
-          <Text style={styles.data}>{item.data}</Text>
+          {/* Categoria da transação */}
+          <Text style={styles.categoria}>{transacao.categoria}</Text>
         </View>
 
-        <View
+        {/* Valor da transação */}
+        <Text
           style={[
-            styles.status,
-            item.pago ? styles.statusPago : styles.statusPendente,
+            styles.valor,
+            transacao.tipo === "receita" ? styles.receita : styles.despesa,
           ]}
         >
-          <Text style={styles.textoStatus}>
-            {item.pago ? "Pago" : "Pendente"}
-          </Text>
-        </View>
+          {transacao.tipo === "receita" ? "+" : "-"} R${" "}
+          {transacao.valor.toFixed(2).replace(".", ",")}
+        </Text>
       </View>
 
-      <View style={styles.areaBotoes}>
-        {item.tipo === "despesa" && item.pago === false && (
+      {/* Mostra se está pago ou pendente */}
+      <Text style={styles.status}>
+        Status: {transacao.pago ? "Pago" : "Pendente"}
+      </Text>
+
+      <View style={styles.botoes}>
+        {/* Botão para marcar como pago */}
+        {!transacao.pago && (
           <TouchableOpacity
             style={styles.botaoPago}
-            onPress={() => marcarComoPago(item.id)}
+            onPress={() => marcarComoPago(transacao.id)}
           >
             <Text style={styles.textoBotao}>Marcar como pago</Text>
           </TouchableOpacity>
         )}
 
+        {/* Botão para apagar */}
         <TouchableOpacity
-          style={styles.botaoExcluir}
-          onPress={() => removerTransacao(item.id)}
+          style={styles.botaoApagar}
+          onPress={() => apagarTransacao(transacao.id)}
         >
-          <Text style={styles.textoBotao}>Excluir</Text>
+          <Text style={styles.textoBotao}>Apagar</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
+// Estilos do item
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#ffffff",
-    marginHorizontal: 16,
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 16,
     marginBottom: 12,
-    padding: 15,
-    borderRadius: 18,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
   },
+
   topo: {
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 10,
   },
-  areaTexto: {
-    flex: 1,
-  },
-  descricao: {
-    fontSize: 17,
+
+  titulo: {
+    fontSize: 16,
     fontWeight: "bold",
-    color: "#111827",
+    color: "#111",
   },
+
+  categoria: {
+    color: "#666",
+    marginTop: 3,
+  },
+
   valor: {
     fontSize: 16,
     fontWeight: "bold",
-    marginTop: 5,
   },
-  data: {
-    color: "#6b7280",
-    fontSize: 13,
-    marginTop: 4,
+
+  receita: {
+    color: "#16a34a",
   },
+
+  despesa: {
+    color: "#dc2626",
+  },
+
   status: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-    alignSelf: "flex-start",
+    marginTop: 10,
+    color: "#555",
   },
-  statusPago: {
-    backgroundColor: "#dcfce7",
-  },
-  statusPendente: {
-    backgroundColor: "#fee2e2",
-  },
-  textoStatus: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#111827",
-  },
-  areaBotoes: {
+
+  botoes: {
     flexDirection: "row",
+    marginTop: 12,
     gap: 10,
-    marginTop: 14,
   },
+
   botaoPago: {
-    flex: 1,
-    backgroundColor: "#22c55e",
-    padding: 11,
+    backgroundColor: "#2563eb",
+    padding: 10,
     borderRadius: 10,
-    alignItems: "center",
   },
-  botaoExcluir: {
-    flex: 1,
-    backgroundColor: "#ef4444",
-    padding: 11,
+
+  botaoApagar: {
+    backgroundColor: "#dc2626",
+    padding: 10,
     borderRadius: 10,
-    alignItems: "center",
   },
+
   textoBotao: {
-    color: "#ffffff",
+    color: "#fff",
     fontWeight: "bold",
-    fontSize: 13,
+    fontSize: 12,
   },
 });

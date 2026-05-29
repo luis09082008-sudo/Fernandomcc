@@ -1,104 +1,63 @@
-import React from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+// Importa componentes básicos
+import { ScrollView, StyleSheet, View } from "react-native";
 
+// Importa componentes criados
+import BarraGastos from "../../components/BarraGastos";
 import CardResumo from "../../components/CardResumo";
-import Footer from "../../components/Footer";
-import FormTransacao from "../../components/FormTransacao";
-import ItemTransacao from "../../components/ItemTransacao";
-import Navbar from "../../components/Navbar";
-import { useFinanceiro } from "../../contexts/FinanceContext";
+import FooterInfo from "../../components/FooterInfo";
+import Header from "../../components/Header";
 
-export default function TelaInicial() {
-  const {
-    transacoes,
-    adicionarTransacao,
-    marcarComoPago,
-    removerTransacao,
-    totalReceitas,
-    totalDespesas,
-    saldo,
-    despesasPendentes,
-  } = useFinanceiro();
+// Importa o hook das transações
+import { useTransacoes } from "../../components/TransacoesContext";
+
+// Tela principal de resumo
+export default function ResumoScreen() {
+  // Pega a lista de transações
+  const { transacoes } = useTransacoes();
+
+  // Soma todas as receitas
+  const totalReceitas = transacoes
+    .filter((item) => item.tipo === "receita")
+    .reduce((soma, item) => soma + item.valor, 0);
+
+  // Soma todas as despesas
+  const totalDespesas = transacoes
+    .filter((item) => item.tipo === "despesa")
+    .reduce((soma, item) => soma + item.valor, 0);
+
+  // Calcula o saldo final
+  const saldo = totalReceitas - totalDespesas;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={transacoes}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <ItemTransacao
-            item={item}
-            marcarComoPago={marcarComoPago}
-            removerTransacao={removerTransacao}
-          />
-        )}
-        ListHeaderComponent={
-          <>
-            <Navbar
-              titulo="Meu Financeiro"
-              subtitulo="Controle suas receitas e despesas"
-            />
+    <View style={styles.tela}>
+      {/* Navbar superior */}
+      <Header titulo="Resumo financeiro" />
 
-            <View style={styles.areaCards}>
-              <CardResumo
-                titulo="Receitas"
-                valor={totalReceitas}
-                cor="#16a34a"
-              />
+      <ScrollView contentContainerStyle={styles.conteudo}>
+        {/* Cards de resumo */}
+        <CardResumo titulo="Saldo atual" valor={saldo} />
+        <CardResumo titulo="Total de receitas" valor={totalReceitas} />
+        <CardResumo titulo="Total de despesas" valor={totalDespesas} />
 
-              <CardResumo
-                titulo="Despesas"
-                valor={totalDespesas}
-                cor="#dc2626"
-              />
+        {/* Gráfico simples */}
+        <BarraGastos transacoes={transacoes} />
 
-              <CardResumo titulo="Saldo" valor={saldo} cor="#2563eb" />
-
-              <CardResumo
-                titulo="Despesas pendentes"
-                valor={despesasPendentes}
-                cor="#f97316"
-              />
-            </View>
-
-            <FormTransacao adicionarTransacao={adicionarTransacao} />
-
-            <Text style={styles.tituloLista}>Transações</Text>
-          </>
-        }
-        ListEmptyComponent={
-          <Text style={styles.listaVazia}>Nenhuma transação cadastrada.</Text>
-        }
-        ListFooterComponent={<Footer />}
-        contentContainerStyle={styles.conteudoLista}
-      />
-    </SafeAreaView>
+        {/* Footer simples */}
+        <FooterInfo />
+      </ScrollView>
+    </View>
   );
 }
 
+// Estilos da tela
 const styles = StyleSheet.create({
-  container: {
+  tela: {
     flex: 1,
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#f3f4f6",
   },
-  conteudoLista: {
-    paddingBottom: 20,
-  },
-  areaCards: {
-    marginHorizontal: 16,
-    marginTop: 16,
-  },
-  tituloLista: {
-    fontSize: 21,
-    fontWeight: "bold",
-    color: "#111827",
-    marginHorizontal: 16,
-    marginTop: 10,
-    marginBottom: 12,
-  },
-  listaVazia: {
-    textAlign: "center",
-    color: "#6b7280",
-    marginTop: 20,
+
+  conteudo: {
+    padding: 20,
+    paddingBottom: 30,
   },
 });

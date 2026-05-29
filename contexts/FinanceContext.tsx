@@ -8,7 +8,6 @@ export type Transacao = {
   valor: number;
   tipo: TipoTransacao;
   pago: boolean;
-  data: string;
 };
 
 type FinanceContextType = {
@@ -36,7 +35,6 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       valor: 1500,
       tipo: "receita",
       pago: true,
-      data: "Hoje",
     },
     {
       id: "2",
@@ -44,15 +42,6 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       valor: 250,
       tipo: "despesa",
       pago: false,
-      data: "Hoje",
-    },
-    {
-      id: "3",
-      descricao: "Internet",
-      valor: 100,
-      tipo: "despesa",
-      pago: true,
-      data: "Hoje",
     },
   ]);
 
@@ -66,8 +55,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       descricao,
       valor,
       tipo,
-      pago: tipo === "receita",
-      data: "Hoje",
+      pago: tipo === "receita" ? true : false,
     };
 
     setTransacoes((listaAtual) => [novaTransacao, ...listaAtual]);
@@ -87,7 +75,9 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   }
 
   function removerTransacao(id: string) {
-    setTransacoes((listaAtual) => listaAtual.filter((item) => item.id !== id));
+    setTransacoes((listaAtual) =>
+      listaAtual.filter((item) => item.id !== id)
+    );
   }
 
   const totalReceitas = transacoes
@@ -98,11 +88,11 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     .filter((item) => item.tipo === "despesa")
     .reduce((soma, item) => soma + item.valor, 0);
 
+  const saldo = totalReceitas - totalDespesas;
+
   const despesasPendentes = transacoes
     .filter((item) => item.tipo === "despesa" && item.pago === false)
     .reduce((soma, item) => soma + item.valor, 0);
-
-  const saldo = totalReceitas - totalDespesas;
 
   return (
     <FinanceContext.Provider
