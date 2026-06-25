@@ -69,3 +69,14 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+
+<Tabs.Screen
+  name="pix"
+  options={{
+    title: "PIX",
+    tabBarIcon: ({ color, size }) => (
+      <Ionicons name="swap-horizontal-outline" size={size} color={color} />
+    ),
+  }}
+/>
