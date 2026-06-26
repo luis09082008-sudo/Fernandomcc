@@ -3,23 +3,30 @@ import { useState } from "react";
 
 // Importa componentes básicos
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 // Importa componentes criados
 import FooterInfo from "../../components/FooterInfo";
 import Header from "../../components/Header";
+import ResponsiveContainer from "../../components/ResponsiveContainer";
 
 // Importa o hook das transações
 import { useTransacoes } from "../../components/TransacoesContext";
+
+// Hook de responsividade
+import { useResponsive } from "../../hooks/use-responsive";
+
+// Cursor de mouse nos botões quando o app roda em um navegador
+import { cursorPointer } from "../../hooks/use-platform";
 
 // Tela para adicionar transações
 export default function AdicionarScreen() {
@@ -31,6 +38,8 @@ export default function AdicionarScreen() {
 
   // Função para adicionar transação
   const { adicionarTransacao } = useTransacoes();
+
+  const { horizontalPadding, scale } = useResponsive();
 
   // Função chamada ao clicar no botão
   function salvar() {
@@ -74,78 +83,93 @@ export default function AdicionarScreen() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.conteudo}>
-          <Text style={styles.label}>Título</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: Mercado"
-            value={titulo}
-            onChangeText={setTitulo}
-          />
+        <ScrollView
+          contentContainerStyle={[
+            styles.conteudo,
+            { paddingHorizontal: horizontalPadding },
+          ]}
+          keyboardShouldPersistTaps="handled"
+        >
+          <ResponsiveContainer>
+            <Text style={[styles.label, { fontSize: scale(14) }]}>Título</Text>
+            <TextInput
+              style={[styles.input, { fontSize: scale(16) }]}
+              placeholder="Ex: Mercado"
+              value={titulo}
+              onChangeText={setTitulo}
+            />
 
-          <Text style={styles.label}>Valor</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: 50,00"
-            value={valor}
-            onChangeText={setValor}
-            keyboardType="numeric"
-          />
+            <Text style={[styles.label, { fontSize: scale(14) }]}>Valor</Text>
+            <TextInput
+              style={[styles.input, { fontSize: scale(16) }]}
+              placeholder="Ex: 50,00"
+              value={valor}
+              onChangeText={setValor}
+              keyboardType="numeric"
+            />
 
-          <Text style={styles.label}>Categoria</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: Alimentação"
-            value={categoria}
-            onChangeText={setCategoria}
-          />
+            <Text style={[styles.label, { fontSize: scale(14) }]}>Categoria</Text>
+            <TextInput
+              style={[styles.input, { fontSize: scale(16) }]}
+              placeholder="Ex: Alimentação"
+              value={categoria}
+              onChangeText={setCategoria}
+            />
 
-          <Text style={styles.label}>Tipo</Text>
+            <Text style={[styles.label, { fontSize: scale(14) }]}>Tipo</Text>
 
-          <View style={styles.linhaBotoes}>
-            {/* Botão para escolher despesa */}
-            <TouchableOpacity
-              style={[
-                styles.botaoTipo,
-                tipo === "despesa" && styles.botaoSelecionado,
-              ]}
-              onPress={() => setTipo("despesa")}
-            >
-              <Text
+            <View style={styles.linhaBotoes}>
+              {/* Botão para escolher despesa */}
+              <TouchableOpacity
                 style={[
-                  styles.textoTipo,
-                  tipo === "despesa" && styles.textoSelecionado,
+                  styles.botaoTipo,
+                  tipo === "despesa" && styles.botaoSelecionado,
+                  cursorPointer,
                 ]}
+                onPress={() => setTipo("despesa")}
               >
-                Despesa
+                <Text
+                  style={[
+                    styles.textoTipo,
+                    tipo === "despesa" && styles.textoSelecionado,
+                  ]}
+                >
+                  Despesa
+                </Text>
+              </TouchableOpacity>
+
+              {/* Botão para escolher receita */}
+              <TouchableOpacity
+                style={[
+                  styles.botaoTipo,
+                  tipo === "receita" && styles.botaoSelecionado,
+                  cursorPointer,
+                ]}
+                onPress={() => setTipo("receita")}
+              >
+                <Text
+                  style={[
+                    styles.textoTipo,
+                    tipo === "receita" && styles.textoSelecionado,
+                  ]}
+                >
+                  Receita
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Botão principal */}
+            <TouchableOpacity
+              style={[styles.botaoSalvar, cursorPointer]}
+              onPress={salvar}
+            >
+              <Text style={[styles.textoSalvar, { fontSize: scale(16) }]}>
+                Salvar transação
               </Text>
             </TouchableOpacity>
 
-            {/* Botão para escolher receita */}
-            <TouchableOpacity
-              style={[
-                styles.botaoTipo,
-                tipo === "receita" && styles.botaoSelecionado,
-              ]}
-              onPress={() => setTipo("receita")}
-            >
-              <Text
-                style={[
-                  styles.textoTipo,
-                  tipo === "receita" && styles.textoSelecionado,
-                ]}
-              >
-                Receita
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Botão principal */}
-          <TouchableOpacity style={styles.botaoSalvar} onPress={salvar}>
-            <Text style={styles.textoSalvar}>Salvar transação</Text>
-          </TouchableOpacity>
-
-          <FooterInfo />
+            <FooterInfo />
+          </ResponsiveContainer>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -160,12 +184,11 @@ const styles = StyleSheet.create({
   },
 
   conteudo: {
-    padding: 20,
+    paddingTop: 20,
     paddingBottom: 30,
   },
 
   label: {
-    fontSize: 14,
     fontWeight: "bold",
     marginBottom: 6,
     color: "#333",
@@ -178,7 +201,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     marginBottom: 16,
-    fontSize: 16,
+    width: "100%",
   },
 
   linhaBotoes: {
@@ -216,11 +239,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 14,
     alignItems: "center",
+    width: "100%",
   },
 
   textoSalvar: {
     color: "#fff",
-    fontSize: 16,
     fontWeight: "bold",
   },
 });

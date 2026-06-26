@@ -1,14 +1,30 @@
 // Importa componentes básicos
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 
 // Importa o tipo da transação
 import { Transacao } from "./TransacoesContext";
+
+// Hook de responsividade
+import { useResponsive } from "../hooks/use-responsive";
+
+// Cursor de mouse nos botões quando o app roda em um navegador
+import { cursorPointer } from "../hooks/use-platform";
 
 // Tipo das propriedades do item
 type Props = {
   transacao: Transacao;
   marcarComoPago: (id: string) => void;
   apagarTransacao: (id: string) => void;
+  // Estilo extra opcional, usado para controlar a largura do item
+  // quando a lista vira uma grade (2+ colunas) em telas largas
+  style?: StyleProp<ViewStyle>;
 };
 
 // Componente que mostra uma transação na lista
@@ -16,22 +32,33 @@ export default function ItemTransacao({
   transacao,
   marcarComoPago,
   apagarTransacao,
+  style,
 }: Props) {
+  const { scale } = useResponsive();
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, style]}>
       <View style={styles.topo}>
-        <View>
+        <View style={styles.textos}>
           {/* Título da transação */}
-          <Text style={styles.titulo}>{transacao.titulo}</Text>
+          <Text
+            style={[styles.titulo, { fontSize: scale(16) }]}
+            numberOfLines={2}
+          >
+            {transacao.titulo}
+          </Text>
 
           {/* Categoria da transação */}
-          <Text style={styles.categoria}>{transacao.categoria}</Text>
+          <Text style={[styles.categoria, { fontSize: scale(13) }]}>
+            {transacao.categoria}
+          </Text>
         </View>
 
         {/* Valor da transação */}
         <Text
           style={[
             styles.valor,
+            { fontSize: scale(16) },
             transacao.tipo === "receita" ? styles.receita : styles.despesa,
           ]}
         >
@@ -41,7 +68,7 @@ export default function ItemTransacao({
       </View>
 
       {/* Mostra se está pago ou pendente */}
-      <Text style={styles.status}>
+      <Text style={[styles.status, { fontSize: scale(13) }]}>
         Status: {transacao.pago ? "Pago" : "Pendente"}
       </Text>
 
@@ -49,7 +76,7 @@ export default function ItemTransacao({
         {/* Botão para marcar como pago */}
         {!transacao.pago && (
           <TouchableOpacity
-            style={styles.botaoPago}
+            style={[styles.botaoPago, cursorPointer]}
             onPress={() => marcarComoPago(transacao.id)}
           >
             <Text style={styles.textoBotao}>Marcar como pago</Text>
@@ -58,7 +85,7 @@ export default function ItemTransacao({
 
         {/* Botão para apagar */}
         <TouchableOpacity
-          style={styles.botaoApagar}
+          style={[styles.botaoApagar, cursorPointer]}
           onPress={() => apagarTransacao(transacao.id)}
         >
           <Text style={styles.textoBotao}>Apagar</Text>
@@ -77,6 +104,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: "#e5e7eb",
+    width: "100%",
   },
 
   topo: {
@@ -85,8 +113,11 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 
+  textos: {
+    flex: 1,
+  },
+
   titulo: {
-    fontSize: 16,
     fontWeight: "bold",
     color: "#111",
   },
@@ -97,7 +128,6 @@ const styles = StyleSheet.create({
   },
 
   valor: {
-    fontSize: 16,
     fontWeight: "bold",
   },
 
@@ -116,6 +146,7 @@ const styles = StyleSheet.create({
 
   botoes: {
     flexDirection: "row",
+    flexWrap: "wrap",
     marginTop: 12,
     gap: 10,
   },

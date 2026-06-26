@@ -4,8 +4,12 @@ import { StyleSheet, Text, View } from "react-native";
 // Importa o tipo da transação
 import { Transacao } from "./TransacoesContext";
 
+// Hook de responsividade
+import { useResponsive } from "../hooks/use-responsive";
+
 // Recebe a lista de transações
 export default function BarraGastos({ transacoes }: { transacoes: Transacao[] }) {
+  const { scale } = useResponsive();
   // Filtra somente despesas
   const despesas = transacoes.filter((item) => item.tipo === "despesa");
 
@@ -31,7 +35,7 @@ export default function BarraGastos({ transacoes }: { transacoes: Transacao[] })
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Gráfico simples de gastos</Text>
+      <Text style={[styles.titulo, { fontSize: scale(18) }]}>Gráfico simples de gastos</Text>
 
       {/* Caso não tenha despesas */}
       {listaCategorias.length === 0 && (
@@ -46,8 +50,8 @@ export default function BarraGastos({ transacoes }: { transacoes: Transacao[] })
         return (
           <View key={item.categoria} style={styles.item}>
             <View style={styles.linhaTexto}>
-              <Text style={styles.categoria}>{item.categoria}</Text>
-              <Text style={styles.valor}>
+              <Text style={[styles.categoria, { fontSize: scale(14) }]}>{item.categoria}</Text>
+              <Text style={[styles.valor, { fontSize: scale(14) }]}>
                 R$ {item.valor.toFixed(2).replace(".", ",")}
               </Text>
             </View>
