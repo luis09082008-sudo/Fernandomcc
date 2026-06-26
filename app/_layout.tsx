@@ -14,10 +14,17 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 // Importa o Provider, que vai guardar e compartilhar as transações no app inteiro
 import { TransacoesProvider } from "../components/TransacoesContext";
 
+// Corrige a altura da página quando o app roda em um navegador (computador)
+import WebFullScreenStyles from "../components/WebFullScreenStyles";
+
 // Componente principal de layout do app
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
+      {/* Só tem efeito na web: garante que o app ocupe a tela inteira
+          do navegador, em qualquer tamanho de janela */}
+      <WebFullScreenStyles />
+
       {/* Ícones claros na barra de status, pois o topo do app é azul escuro.
           translucent + backgroundColor "transparent" deixa o conteúdo do
           Android ocupar a tela inteira (edge-to-edge) sem listrinha cinza. */}
